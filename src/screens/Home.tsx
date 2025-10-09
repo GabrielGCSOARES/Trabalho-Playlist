@@ -31,7 +31,7 @@ export function Home() {
                             <Text style={styles.nome}>{item.duracao}</Text>
                             <Text style={styles.estilo}>{item.estilo}</Text>     
                         </View>
-                        <Ionicons name="play-circle" size={30} style={{marginLeft:10, color:"#3057f3ff"}} />
+                        <Ionicons name="play-circle" size={30} style={{marginLeft:10, color:"#6f0497ff"}} />
                     </View>
                 )}
             />
