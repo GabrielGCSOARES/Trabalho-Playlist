@@ -3,6 +3,7 @@ import { ActivityIndicator, View, Text, FlatList, Modal, TextInput, TouchableOpa
 import { Ionicons } from '@expo/vector-icons';
 import styles from './Styles';
 import axios from 'axios';
+import { API } from '../../apiConfig';
 
 export function Home() {
     const [musicas, setMusicas] = useState<any[]>([]);
@@ -16,24 +17,23 @@ export function Home() {
 
     useEffect(() => {
         carregarMusicas();
-    }, [])
+    }, []);
 
     const carregarMusicas = () => {
         axios
-            .get("http://127.0.0.1:8000/api/musicas")
+            .get(`${API}/api/musicas`) 
             .then((res) => setMusicas(res.data))
-            .catch((err) => console.error("Erro ao carregar músicas:", err))
-    }
+            .catch((err) => console.error("Erro ao carregar músicas:", err));
+    };
 
     const handleCadastrarMusica = () => {
-        // Validação básica
         if (!novaMusica.nome || !novaMusica.duracao || !novaMusica.compositor || !novaMusica.estilo) {
             Alert.alert('Erro', 'Por favor, preencha todos os campos');
             return;
         }
 
         axios
-            .post("http://127.0.0.1:8000/api/musicas", novaMusica)
+            .post(`${API}/api/musicas`, novaMusica) 
             .then((res) => {
                 setModalVisible(false);
                 setNovaMusica({ nome: '', duracao: '', compositor: '', estilo: '' });
@@ -43,8 +43,8 @@ export function Home() {
             .catch((err) => {
                 console.error("Erro ao cadastrar música:", err);
                 Alert.alert('Erro', 'Não foi possível cadastrar a música');
-            })
-    }
+            });
+    };
 
     return (
         <View style={styles.container}>
@@ -54,6 +54,7 @@ export function Home() {
                     <Ionicons name="add-circle" size={30} style={{ color: "#6f0497ff" }} />
                 </TouchableOpacity>
             </View>
+
             <FlatList
                 data={musicas}
                 keyExtractor={(item) => item.id.toString()}
@@ -71,7 +72,14 @@ export function Home() {
                         <Ionicons name="play-circle" size={30} style={{marginLeft:10, color:"#6f0497ff"}} />
                     </View>
                 )}
+                ListEmptyComponent={
+                    <View style={{ marginTop: 50, alignItems: 'center' }}>
+                        <ActivityIndicator size="large" color="#6f0497ff" />
+                        <Text style={{ color: "#666", marginTop: 10 }}>Carregando músicas...</Text>
+                    </View>
+                }
             />
+
             <Modal
                 animationType="slide"
                 transparent={true}
