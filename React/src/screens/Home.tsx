@@ -19,31 +19,52 @@ export function Home() {
         carregarMusicas();
     }, []);
 
-    const carregarMusicas = () => {
-        axios
-            .get(`${API}/api/musicas`) 
-            .then((res) => setMusicas(res.data))
-            .catch((err) => console.error("Erro ao carregar músicas:", err));
+    const carregarMusicas = async () => {
+        try {
+            const response = await axios.get(`${API}/api/musicas` , {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                    'User-Agent': 'ReactNativeApp',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log('Resposta da API:', response.data);
+            setMusicas(response.data);
+        } catch (error) {
+            console.error('Erro ao carregar músicas:', error);
+        } finally {
+            
+        }
     };
 
-    const handleCadastrarMusica = () => {
+    const handleCadastrarMusica = async () => {
         if (!novaMusica.nome || !novaMusica.duracao || !novaMusica.compositor || !novaMusica.estilo) {
             Alert.alert('Erro', 'Por favor, preencha todos os campos');
             return;
         }
 
-        axios
-            .post(`${API}/api/musicas`, novaMusica) 
-            .then((res) => {
-                setModalVisible(false);
-                setNovaMusica({ nome: '', duracao: '', compositor: '', estilo: '' });
-                carregarMusicas();
-                Alert.alert('Sucesso', 'Música cadastrada com sucesso!');
-            })
-            .catch((err) => {
-                console.error("Erro ao cadastrar música:", err);
-                Alert.alert('Erro', 'Não foi possível cadastrar a música');
+        try {
+            const response = await axios.post(`${API}/api/musicas`, novaMusica, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                    'User-Agent': 'ReactNativeApp',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
             });
+
+            console.log('Música cadastrada:', response.data);
+
+            setModalVisible(false);
+            setNovaMusica({ nome: '', duracao: '', compositor: '', estilo: '' });
+            carregarMusicas();
+            Alert.alert('Sucesso', 'Música cadastrada com sucesso!');
+        } catch (error) {
+            console.error('Erro ao cadastrar música:', error);
+            Alert.alert('Erro', 'Não foi possível cadastrar a música');
+        }
     };
 
     return (
@@ -69,7 +90,7 @@ export function Home() {
                             <Text style={styles.nome}>{item.duracao}</Text>
                             <Text style={styles.estilo}>{item.estilo}</Text>     
                         </View>
-                        <Ionicons name="play-circle" size={30} style={{marginLeft:10, color:"#6f0497ff"}} />
+                        <Ionicons name="play-circle" size={30} style={{ marginLeft: 10, color: "#6f0497ff" }} />
                     </View>
                 )}
                 ListEmptyComponent={
@@ -95,7 +116,7 @@ export function Home() {
                             placeholder="Nome da música"
                             placeholderTextColor="#999"
                             value={novaMusica.nome}
-                            onChangeText={(text) => setNovaMusica({...novaMusica, nome: text})}
+                            onChangeText={(text) => setNovaMusica({ ...novaMusica, nome: text })}
                         />
                         
                         <TextInput
@@ -103,7 +124,7 @@ export function Home() {
                             placeholder="Duração (ex: 03:45)"
                             placeholderTextColor="#999"
                             value={novaMusica.duracao}
-                            onChangeText={(text) => setNovaMusica({...novaMusica, duracao: text})}
+                            onChangeText={(text) => setNovaMusica({ ...novaMusica, duracao: text })}
                         />
                         
                         <TextInput
@@ -111,7 +132,7 @@ export function Home() {
                             placeholder="Compositor"
                             placeholderTextColor="#999"
                             value={novaMusica.compositor}
-                            onChangeText={(text) => setNovaMusica({...novaMusica, compositor: text})}
+                            onChangeText={(text) => setNovaMusica({ ...novaMusica, compositor: text })}
                         />
                         
                         <TextInput
@@ -119,7 +140,7 @@ export function Home() {
                             placeholder="Estilo musical (ex: Rock, Heavy Metal, Pop)"
                             placeholderTextColor="#999"
                             value={novaMusica.estilo}
-                            onChangeText={(text) => setNovaMusica({...novaMusica, estilo: text})}
+                            onChangeText={(text) => setNovaMusica({ ...novaMusica, estilo: text })}
                         />
 
                         <View style={styles.modalButtons}>
